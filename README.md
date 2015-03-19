@@ -12,7 +12,7 @@ user accounting in Symfony.
 To install the bundle through Composer, run the following command in console at your project base path:
 
 ```
-php composer.phar require jogaram/symfony-react-bundle
+php composer.phar require jogaram/react-bundle
 ```
 
 Then register the new bundle in your AppKernel.
