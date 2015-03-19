@@ -1,0 +1,15 @@
+{
+  "name": "jogaram/react-bundle",
+  "description": "ReactPHP Bundle for Symfony2",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "target-dir": "jogaram/ReactPHPBundle",
+  "require": {
+    "symfony/symfony": ">=2.4.0",
+    "react/react": "0.4.*"
+  },
+  "autoload": {
+    "psr-0": { "Jogaram\\ReactPHPBundle": "" }
+  },
+  "target-dir" : "Jogaram/ReactPHPBundle"
+}
