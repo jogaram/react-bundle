@@ -63,9 +63,15 @@ class ReactKernel extends \AppKernel
     private function parseSfResponse(Response $response, SymfonyResponse $sfResponse)
     {
         $headers = array_map('current', $sfResponse->headers->allPreserveCase());
-        $headers['Set-Cookie'] = $this->serializeCookiesHeader(array(
-            'PHPSESSID' => session_id(),
-        ));
+        $cookies = array();
+
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $cookies['PHPSESSID'] = session_id();
+        }
+
+        if (count($cookies) > 0) {
+            $headers['Set-Cookie'] = $this->serializeCookiesHeader($cookies);
+        }
 
         $response->writeHead($sfResponse->getStatusCode(), $headers);
     }
