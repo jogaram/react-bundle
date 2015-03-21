@@ -12,8 +12,6 @@ class ReactKernel extends \AppKernel
 {
     public function __invoke(Request $request, Response $response)
     {
-        $this->loadClassCache();
-
         if ($request->getMethod() === 'POST') {
             $request->on('data', function ($postData) use ($request, $response) {
                 parse_str($postData, $postDataArray);

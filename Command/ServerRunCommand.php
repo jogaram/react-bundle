@@ -29,12 +29,12 @@ class ServerRunCommand extends ContainerAwareCommand
                 InputOption::VALUE_NONE,
                 'Enable standalone mode. It means webserver isn\'t needed. Static file will be served by ReactPHP.'
             )
-//            ->addOption(
-//                'apc',
-//                null,
-//                InputOption::VALUE_NONE,
-//                'Enable APC cache.'
-//            )
+            ->addOption(
+                'apc',
+                null,
+                InputOption::VALUE_NONE,
+                'Enable APC cache.'
+            )
         ;
     }
 
@@ -47,7 +47,7 @@ class ServerRunCommand extends ContainerAwareCommand
         $server
             ->setEnv($this->getContainer()->getParameter('kernel.environment'))
             ->setStandalone($input->getOption('standalone'))
-//            ->setApc($input->getOption('apc'))
+            ->setApc($input->getOption('apc'))
             ->build()
             ->run()
         ;
