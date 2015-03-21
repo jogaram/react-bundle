@@ -24,12 +24,6 @@ class ServerStartCommand extends ContainerAwareCommand
                 1337
             )
             ->addOption(
-                'debug',
-                null,
-                InputOption::VALUE_NONE,
-                'Enable debug mode'
-            )
-            ->addOption(
                 'standalone',
                 null,
                 InputOption::VALUE_NONE,
@@ -60,7 +54,7 @@ class ServerStartCommand extends ContainerAwareCommand
 
         $server = new Server($this->getContainer()->getParameter('kernel.root_dir'), $port);
         $server
-            ->setDebug($input->getOption('debug'))
+            ->setEnv($this->getContainer()->getParameter('kernel.environment'))
             ->setStandalone($input->getOption('standalone'))
             ->build()
             ->run()

@@ -1,9 +1,10 @@
-## Purpose
+## Introduction
 
-* Run Symfony apps under [React-PHP](https://github.com/react-php).
+*Run Symfony apps under [React-PHP](https://github.com/react-php).*
 
-Note: This bundle hasn't got cookie support yet, if you need session handling, use Symfony HTTP Basic Auth header when handling
-user accounting in Symfony.
+This module adds three Symfony console commands to run a server with your APP.
+
+No configuration is needed. Follow the **Installation** instructions and read **Usage** section to know how to start using ReactPHP with your Symfony APP.
 
 ## Installation
 
@@ -14,6 +15,8 @@ To install the bundle through Composer, run the following command in console at 
 ```
 php composer.phar require jogaram/react-bundle
 ```
+
+### Register bundle
 
 Then register the new bundle in your AppKernel.
 
@@ -27,4 +30,32 @@ Then register the new bundle in your AppKernel.
         ...
     );
     
+```
+
+## Usage
+
+To start using ReactPHP with Symfony, open console, go to your project root path and execute the following command:
+
+```
+php app/console react:server:run --standalone
+```
+
+### Available options
+
+* **--port=1337** | **-p 1337** Selects port to run server at. Defaults to 1337.
+* **--standalone** If passed, React server will serve static files directly. (Use this if you don`t have Apache or Nginx running in you local machine. Static file serving is not designed for production environments)
+
+### Background server
+
+This bundle comes with two more methods to run server in background. To start the server execute the following:
+
+```
+php app/console react:server:start --standalone
+```
+Note: If port is specified, also must be specified in stop server command.
+
+To stop the server, run:
+
+```
+php app/console react:server:stop --standalone
 ```

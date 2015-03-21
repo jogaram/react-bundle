@@ -13,7 +13,7 @@ use React\Http\Server as HttpServer;
 class Server {
 
     private $port = 1337;
-    private $debug = false;
+    private $env = 'dev';
     private $standalone = false;
     private $root_dir;
 
@@ -30,56 +30,74 @@ class Server {
         return $this;
     }
 
-
+    /**
+     * Builds internal request handling objects.
+     *
+     * @return $this
+     */
     public function build(){
         require_once $this->root_dir . '/AppKernel.php';
         define('KERNEL_ROOT', $this->root_dir);
 
-        $kernel = new ReactKernel($this->debug ? 'dev' : 'prod', $this->debug ? true : false);
+        $kernel = new ReactKernel($this->env, $this->env === 'dev' ? true : false);
 
         $this->loop = Factory::create();
         $this->socket = new SocketServer($this->loop);
         $http = new HttpServer($this->socket, $this->loop);
-
-        if ($this->standalone) {
-            $http->on('request', $this->handleRequest($kernel));
-        } else {
-            $http->on('request', $kernel);
-        }
+        $http->on('request', $this->handleRequest($kernel));
 
         return $this;
     }
 
+    /**
+     * Runs the server by initializing ReactPHP EventLoop
+     *
+     * @throws \React\Socket\ConnectionException
+     */
     public function run(){
         $this->socket->listen($this->port);
         $this->loop->run();
     }
 
+    /**
+     * Handles a request. In case of standalone mode is active, it directly serves static files
+     * from file system.
+     *
+     * @param ReactKernel $kernel
+     * @return callable|ReactKernel
+     */
     private function handleRequest(ReactKernel $kernel) {
-        return function (Request $request, Response $response) use ($kernel) {
-            $file = $this->root_dir . '/../web' . $request->getPath();
-            if ($request->getPath() !== '/' && file_exists($file)) {
-                $response->writeHead(200, array(
-                    'Content-Type' => $this->getFileMimeType($file),
-                    'Content-Length' => filesize($file)
-                ));
-                $response->end(file_get_contents($file));
-            } else {
-                $kernel($request, $response);
-            }
-        };
+        if (!$this->standalone)
+            return $kernel;
+        else
+            return function (Request $request, Response $response) use ($kernel) {
+                $file = $this->root_dir . '/../web' . $request->getPath();
+                if ($request->getPath() !== '/' && file_exists($file)) {
+                    $response->writeHead(200, array(
+                        'Content-Type' => $this->getFileMimeType($file),
+                        'Content-Length' => filesize($file)
+                    ));
+                    $response->end(file_get_contents($file));
+                } else {
+                    $kernel($request, $response);
+                }
+            };
     }
 
+    /**
+     * Guess mime type for a given path in HTTP header type.
+     *
+     * @param $path
+     * @return mixed|string
+     */
     private function getFileMimeType($path) {
         $ext = pathinfo($path, PATHINFO_EXTENSION);
 
         switch ($ext) {
             case 'css':
                 return 'text/css';
-                break;
             case 'js':
                 return 'text/javascript';
-                break;
             default:
                 $finfo = finfo_open(FILEINFO_MIME_TYPE);
                 $mime =  finfo_file($finfo, $path);
@@ -90,12 +108,12 @@ class Server {
     }
 
     /**
-     * @param boolean $debug
+     * @param string $env
      * @return Server
      */
-    public function setDebug($debug)
+    public function setEnv($env)
     {
-        $this->debug = $debug;
+        $this->env = $env;
         return $this;
     }
 
