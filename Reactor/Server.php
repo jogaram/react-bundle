@@ -9,11 +9,13 @@ use React\Http\Request;
 use React\Http\Response;
 use React\Socket\Server as SocketServer;
 use React\Http\Server as HttpServer;
+use Symfony\Component\ClassLoader\ApcClassLoader;
 
 class Server {
 
     private $port = 1337;
     private $env = 'dev';
+    private $apc = false;
     private $standalone = false;
     private $root_dir;
 
@@ -36,6 +38,14 @@ class Server {
      * @return $this
      */
     public function build(){
+        $loader = require_once $this->root_dir . '/bootstrap.php.cache';
+
+        if ($this->apc) {
+            $apcLoader = new ApcClassLoader(sha1('ReactServer'), $loader);
+            $loader->unregister();
+            $apcLoader->register(true);
+        }
+
         require_once $this->root_dir . '/AppKernel.php';
         define('KERNEL_ROOT', $this->root_dir);
 
@@ -118,6 +128,16 @@ class Server {
     }
 
     /**
+     * @param boolean $apc
+     * @return Server
+     */
+    public function setApc($apc)
+    {
+        $this->apc = $apc;
+        return $this;
+    }
+
+    /**
      * @param boolean $standalone
      * @return Server
      */
@@ -126,4 +146,5 @@ class Server {
         $this->standalone = $standalone;
         return $this;
     }
+
 }
