@@ -44,6 +44,8 @@ php app/console react:server:run --standalone
 
 * **--port=1337** | **-p 1337** Selects port to run server at. Defaults to 1337.
 * **--standalone** If passed, React server will serve static files directly. (Use this if you don`t have Apache or Nginx running in you local machine. Static file serving is not designed for production environments)
+* **--cache** If passed, class loader will be enabled.
+* **--apc** If passed, APC class loader will be enabled. This option requires **--cache** option.
 
 ### Background server
 
