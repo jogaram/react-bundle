@@ -16,6 +16,7 @@ class Server {
 
     private $port = 1337;
     private $env = 'dev';
+    private $cache = false;
     private $apc = false;
     private $standalone = false;
     private $root_dir;
@@ -39,12 +40,14 @@ class Server {
      * @return $this
      */
     public function build(){
-        $loader = new ClassLoader();
+        if ($this->cache) {
+            $loader = new ClassLoader();
 
-        if ($this->apc) {
-            $apcLoader = new ApcClassLoader(sha1('ReactServer'), $loader);
-            $loader->unregister();
-            $apcLoader->register(true);
+            if ($this->apc) {
+                $apcLoader = new ApcClassLoader(sha1('ReactServer'), $loader);
+                $loader->unregister();
+                $apcLoader->register(true);
+            }
         }
 
         require_once $this->root_dir . '/AppKernel.php';
@@ -148,4 +151,13 @@ class Server {
         return $this;
     }
 
+    /**
+     * @param boolean $cache
+     * @return Server
+     */
+    public function setCache($cache)
+    {
+        $this->cache = $cache;
+        return $this;
+    }
 }

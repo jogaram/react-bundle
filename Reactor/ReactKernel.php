@@ -12,6 +12,10 @@ class ReactKernel extends \AppKernel
 {
     public function __invoke(Request $request, Response $response)
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         if ($request->getMethod() === 'POST') {
             $request->on('data', function ($postData) use ($request, $response) {
                 parse_str($postData, $postDataArray);
@@ -65,7 +69,7 @@ class ReactKernel extends \AppKernel
         $headers = array_map('current', $sfResponse->headers->allPreserveCase());
         $cookies = array();
 
-        if (session_status() === PHP_SESSION_ACTIVE) {
+        if (session_status() === PHP_SESSION_ACTIVE && !array_key_exists('PHPSESSID', $_COOKIE)) {
             $cookies['PHPSESSID'] = session_id();
         }
 
@@ -82,7 +86,7 @@ class ReactKernel extends \AppKernel
             $concat[] = $key . '=' . $value;
         }
 
-        return join('; ', $concat);
+        return implode('; ', $concat);
     }
 
     /**
@@ -103,6 +107,7 @@ class ReactKernel extends \AppKernel
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
+        var_dump('Loading config for env' . $this->getEnvironment());
         $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
     }
 

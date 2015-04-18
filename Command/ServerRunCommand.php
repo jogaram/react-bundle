@@ -33,7 +33,13 @@ class ServerRunCommand extends ContainerAwareCommand
                 'apc',
                 null,
                 InputOption::VALUE_NONE,
-                'Enable APC cache.'
+                'Enable APC cache. --cache option must be enabled.'
+            )
+            ->addOption(
+                'cache',
+                null,
+                InputOption::VALUE_NONE,
+                'Enable basic class loader cache.'
             )
         ;
     }
@@ -48,6 +54,7 @@ class ServerRunCommand extends ContainerAwareCommand
             ->setEnv($this->getContainer()->getParameter('kernel.environment'))
             ->setStandalone($input->getOption('standalone'))
             ->setApc($input->getOption('apc'))
+            ->setCache($input->getOption('cache'))
             ->build()
             ->run()
         ;
