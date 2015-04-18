@@ -59,5 +59,5 @@ Note: If port is specified, also must be specified in stop server command.
 To stop the server, run:
 
 ```
-php app/console react:server:stop --standalone
+php app/console react:server:stop
 ```
