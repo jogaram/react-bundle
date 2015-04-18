@@ -107,7 +107,6 @@ class ReactKernel extends \AppKernel
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        var_dump('Loading config for env' . $this->getEnvironment());
         $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
     }
 
